@@ -21,13 +21,12 @@ public extension Font {
         let fontWeight = overrideWeight ?? style.defaultWeight
         let fontName = "AppFont-\(fontWeight.rawValue)" // Replace "AppFont" with your font family name
 
-        if let baseFont = UIFont(name: fontName, size: fontSize) {
-            let scaledFont = UIFontMetrics(forTextStyle: style.textStyle).scaledFont(for: baseFont)
-            return Font(scaledFont)
+        // If both size and weight are provided as overrides, use fixed size
+        if overrideSize != nil && overrideWeight != nil {
+            return .customFontFamily(fontWeight, ofSize: fontSize)
         }
 
-        // Fallback: use fixed size font if scaling fails
-        return .customFontFamily(fontWeight, ofSize: fontSize)
+        return Font.custom(fontName, size: style.baseSize, relativeTo: style.textStyle)
     }
     
     /// Fixed-size version of your custom font family
@@ -70,10 +69,10 @@ public enum CustomTextStyle {
         }
     }
 
-    var textStyle: UIFont.TextStyle {
+    var textStyle: Font.TextStyle {
         switch self {
         case .largeTitle: return .largeTitle
-        case .title1: return .title1
+        case .title1: return .title
         case .title2: return .title2
         case .title3: return .title3
         case .headline: return .headline
